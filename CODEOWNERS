@@ -1,0 +1,3 @@
+# Changes to security related files needs to be approved by the security team.
+**/.github/**/secret_scanning.yml    @TelenorNorgeInternal/s07496-ghas-dev-sec
+**/.telenor/**/security.yml          @TelenorNorgeInternal/s07496-ghas-dev-sec
