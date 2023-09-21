@@ -1,0 +1,14 @@
+[package]
+name = "example2"
+version = "0.1.0"
+edition = "2021"
+authors = ["Telenor"]
+description = "A tnn test extension"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+extension = { path = "../../extension" }
+logs = { path = "../../logs" }
+anyhow = "1.0.75"
