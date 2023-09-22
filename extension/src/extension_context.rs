@@ -1,18 +1,14 @@
 use anyhow::Result;
-use std::{any::Any, collections::HashMap, future::Future, sync::Arc};
+use std::{any::Any, collections::HashMap, future::Future, pin::Pin, sync::Arc};
 use thiserror::Error;
 use tokio::sync::Mutex;
 use util_tnn_state::State;
 
-use crate::{call::Call, call_context::CallContext, Mixin};
+use crate::{call::Call, call_context::CallContext, extension_communication::ExtensionCommunication, Mixin};
 
 #[repr(C)]
 pub struct ExtensionContext {
 	extension_name: &'static str,
-	/// HashMap<call_name, handle_call(CallContext<T>)>
-	calls: Arc<Mutex<HashMap<&'static str, &'static dyn Any>>>,
-	/// HashMap<mixin_name, on_before_subscriber_added(&'static str)>
-	mixins: Arc<Mutex<HashMap<&'static str, &'static dyn Any>>>,
 	/// A flag for wheter this context is locked
 	locked: Arc<Mutex<bool>>,
 	pub state: Arc<Mutex<State>>,
@@ -24,8 +20,6 @@ impl ExtensionContext {
 			extension_name,
 			locked: Arc::new(Mutex::new(false)),
 			state: Arc::new(Mutex::new(State::default())),
-			calls: Arc::new(Mutex::new(HashMap::new())),
-			mixins: Arc::new(Mutex::new(HashMap::new())),
 		}
 	}
 
@@ -53,19 +47,7 @@ impl ExtensionContext {
 	) -> Result<()> {
 		self.assert_not_locked().await?;
 
-		if call.owner != self.extension_name {
-			return Err(NotCallOwnerError(self.extension_name, call.owner, call.name).into());
-		}
-
-		let mut calls = self.calls.lock().await;
-
-		if calls.contains_key(call.name) {
-			return Err(DuplicateCallError(self.extension_name, call.name).into());
-		}
-
-		calls.insert(call.name, handler as &dyn Any);
-
-		Ok(())
+		todo!("James Bradlee: implement this")
 	}
 
 	pub async fn add_mixin<Payload: Sized, ReturnType: Future<Output = Result<()>>>(
@@ -75,19 +57,7 @@ impl ExtensionContext {
 	) -> Result<()> {
 		self.assert_not_locked().await?;
 
-		if mixin.owner != self.extension_name {
-			return Err(NotMixinOwnerError(self.extension_name, mixin.owner, mixin.name).into());
-		}
-
-		let mut mixins = self.mixins.lock().await;
-
-		if mixins.contains_key(mixin.name) {
-			return Err(DuplicateMixinError(self.extension_name, mixin.name).into());
-		}
-
-		mixins.insert(mixin.name, subscription_approver as &dyn Any);
-
-		Ok(())
+		todo!("James Bradlee: implement this")
 	}
 
 	pub async fn emit<Payload: Sized>(&self, _mixin: Mixin<Payload>, _payload: Payload) -> Result<()> {
