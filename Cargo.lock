@@ -18,6 +18,54 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f26201604c87b1e01bd3d98f8d5d9a8fcbb815e8cedb41ffccbeb4bf593a35fe"
 
 [[package]]
+name = "anstream"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b1f58811cfac344940f1a400b6e6231ce35171f614f26439e80f8c1465c5cc0c"
+dependencies = [
+ "anstyle",
+ "anstyle-parse",
+ "anstyle-query",
+ "anstyle-wincon",
+ "colorchoice",
+ "utf8parse",
+]
+
+[[package]]
+name = "anstyle"
+version = "1.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b84bf0a05bbb2a83e5eb6fa36bb6e87baa08193c35ff52bbf6b38d8af2890e46"
+
+[[package]]
+name = "anstyle-parse"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "938874ff5980b03a87c5524b3ae5b59cf99b1d6bc836848df7bc5ada9643c333"
+dependencies = [
+ "utf8parse",
+]
+
+[[package]]
+name = "anstyle-query"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5ca11d4be1bab0c8bc8734a9aa7bf4ee8316d462a08c6ac5052f888fef5b494b"
+dependencies = [
+ "windows-sys",
+]
+
+[[package]]
+name = "anstyle-wincon"
+version = "2.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "58f54d10c6dfa51283a066ceab3ec1ab78d13fae00aa49243a45e4571fb79dfd"
+dependencies = [
+ "anstyle",
+ "windows-sys",
+]
+
+[[package]]
 name = "anyhow"
 version = "1.0.75"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -83,6 +131,52 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "clap"
+version = "4.4.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b1d7b8d5ec32af0fadc644bf1fd509a688c2103b185644bb1e29d164e0703136"
+dependencies = [
+ "clap_builder",
+ "clap_derive",
+]
+
+[[package]]
+name = "clap_builder"
+version = "4.4.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5179bb514e4d7c2051749d8fcefa2ed6d06a9f4e6d69faf3805f5d80b8cf8d56"
+dependencies = [
+ "anstream",
+ "anstyle",
+ "clap_lex",
+ "strsim",
+]
+
+[[package]]
+name = "clap_derive"
+version = "4.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0862016ff20d69b84ef8247369fabf5c008a7417002411897d40ee1f4532b873"
+dependencies = [
+ "heck",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "clap_lex"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cd7cc57abe963c6d3b9d8be5b06ba7c8957a930305ca90304f24ef040aa6f961"
+
+[[package]]
+name = "colorchoice"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "acbf1af155f9b9ef647e42cdc158db4b64a1b61f743629225fde6f3e0be2a7c7"
+
+[[package]]
 name = "const_format"
 version = "0.2.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -103,83 +197,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "example1"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "extension",
- "logs",
-]
-
-[[package]]
-name = "example2"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "extension",
- "logs",
-]
-
-[[package]]
-name = "example3"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "extension",
- "logs",
-]
-
-[[package]]
-name = "example4"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "extension",
- "logs",
-]
-
-[[package]]
-name = "example5"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "extension",
- "logs",
-]
-
-[[package]]
-name = "extension"
+name = "ext_tnn"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "const_format",
- "state",
  "thiserror",
  "tokio",
-]
-
-[[package]]
-name = "extension_loader"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "extension",
- "glob",
- "libloading",
- "logs",
-]
-
-[[package]]
-name = "extension_repository"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-recursion",
- "extension",
- "logs",
- "semver",
- "thiserror",
- "tokio",
+ "util_tnn_state",
 ]
 
 [[package]]
@@ -193,6 +218,12 @@ name = "glob"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d2fabcfbdc87f4758337ca535fb41a6d701b65693ce38287d856d1674551ec9b"
+
+[[package]]
+name = "heck"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "95505c38b4572b2d910cecb0281560f54b440a19336cbbcb27bf6ce6adc6f5a8"
 
 [[package]]
 name = "hermit-abi"
@@ -225,10 +256,6 @@ dependencies = [
  "autocfg",
  "scopeguard",
 ]
-
-[[package]]
-name = "logs"
-version = "0.1.0"
 
 [[package]]
 name = "memchr"
@@ -375,12 +402,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "state"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "thiserror",
-]
+name = "strsim"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "syn"
@@ -418,11 +443,22 @@ name = "tnn"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "extension",
- "extension_loader",
- "extension_repository",
- "logs",
+ "ext_tnn",
+ "thiserror",
+ "tnn_core",
  "tokio",
+ "util_tnn_ext_loader",
+ "util_tnn_logs",
+ "util_tnn_repo",
+]
+
+[[package]]
+name = "tnn_core"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "ext_tnn",
 ]
 
 [[package]]
@@ -466,6 +502,48 @@ name = "unicode-xid"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f962df74c8c05a667b5ee8bcf162993134c104e96440b663c8daa176dc772d8c"
+
+[[package]]
+name = "utf8parse"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "711b9620af191e0cdc7468a8d14e709c3dcdb115b36f838e601583af800a370a"
+
+[[package]]
+name = "util_tnn_ext_loader"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "ext_tnn",
+ "glob",
+ "libloading",
+ "util_tnn_logs",
+]
+
+[[package]]
+name = "util_tnn_logs"
+version = "0.1.0"
+
+[[package]]
+name = "util_tnn_repo"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-recursion",
+ "ext_tnn",
+ "semver",
+ "thiserror",
+ "tokio",
+ "util_tnn_logs",
+]
+
+[[package]]
+name = "util_tnn_state"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "thiserror",
+]
 
 [[package]]
 name = "wasi"

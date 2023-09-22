@@ -8,12 +8,15 @@ description = "A quality of life developer tool to interact with Telenor service
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [workspace]
-members = ["state", "extension", "extension_repository", "extensions/*"]
+members = ["state", "extension", "extension_repository", "core"]
 
 [dependencies]
-extension = { path = "extension" }
-extension_repository = { path = "extension_repository" }
-extension_loader = { path = "extension_loader" }
-logs = { path = "logs" }
+ext_tnn = { path = "extension" }
+tnn_core = { path = "core" }
+util_tnn_repo = { path = "extension_repository" }
+util_tnn_ext_loader = { path = "extension_loader" }
+util_tnn_logs = { path = "logs" }
+
 tokio = { version = "1.32.0", features = ["full"] }
 anyhow = "1.0.75"
+thiserror = "1.0.48"

@@ -5,7 +5,7 @@ use std::{
 
 use anyhow::Result;
 use async_recursion::async_recursion;
-use extension::{Dependency, Extension, ExtensionContext};
+use ext_tnn::{Dependency, Extension, ExtensionContext};
 use semver::{Version, VersionReq};
 use thiserror::Error;
 use tokio::sync::Mutex;
@@ -94,7 +94,7 @@ impl ExtensionRepository {
 					missing.push(dependency);
 				}
 			}
-			logs::critical!(
+			util_tnn_logs::critical!(
 				"Extension '{}@{}' was not activated, missing '{}'",
 				extension,
 				self.get_extension_version_for(extension).await.unwrap(),
@@ -184,7 +184,7 @@ impl ExtensionRepository {
 							received_version,
 							version_matcher,
 						));
-						logs::warn!(
+						util_tnn_logs::warn!(
 							"Extension '{}@{}' expected version '{}' from required dependency '{}' (but got '{}') - extension will not be initialized",
 							extension.name,
 							extension.version,
@@ -193,7 +193,7 @@ impl ExtensionRepository {
 							received_version
 						);
 					} else {
-						logs::warn!(
+						util_tnn_logs::warn!(
 							"Extension '{}@{}' expected version '{}' from optional dependency '{}' (but got '{}')",
 							extension.name,
 							extension.version,
@@ -240,9 +240,9 @@ impl ExtensionRepository {
 
 	#[async_recursion(?Send)]
 	async fn complete(&self, extension: &'static Extension) -> Result<()> {
-		logs::debug!("[repository] Completing {}@{}", extension.name, extension.version);
+		util_tnn_logs::debug!("[repository] Completing {}@{}", extension.name, extension.version);
 		self.activate_extension(extension).await?;
-		logs::debug!(
+		util_tnn_logs::debug!(
 			"[repository] Initialized {}@{} - now resolving dependents",
 			extension.name,
 			extension.version
@@ -252,7 +252,7 @@ impl ExtensionRepository {
 
 		if let Some(dependents) = self.extensions_dependents_expected.lock().await.remove(extension.name) {
 			for dependent in dependents {
-				logs::debug!(
+				util_tnn_logs::debug!(
 					"[repository] from {}@{} resolving {}",
 					extension.name,
 					extension.version,
@@ -302,7 +302,7 @@ impl ExtensionRepository {
 			self.complete(ext).await?;
 		}
 
-		logs::debug!("[repository] Completed {}@{}", extension.name, extension.version);
+		util_tnn_logs::debug!("[repository] Completed {}@{}", extension.name, extension.version);
 
 		Ok(())
 	}

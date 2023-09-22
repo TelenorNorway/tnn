@@ -1,8 +1,8 @@
 use std::{path::PathBuf, str::FromStr};
 
 use anyhow::Result;
-use extension_loader::load_from_directory;
-use extension_repository::ExtensionRepository;
+use util_tnn_ext_loader::load_from_directory;
+use util_tnn_repo::ExtensionRepository;
 
 mod core;
 
@@ -12,11 +12,11 @@ async fn main() -> Result<()> {
 	// interact with one another.
 	let repository = ExtensionRepository::new();
 
-	logs::debug!("Adding core extension!");
+	util_tnn_logs::debug!("Adding core extension!");
 	// Injects the core extension.
 	repository.add(&core::MANIFEST).await?;
 
-	logs::debug!("Adding extensions from debug!");
+	util_tnn_logs::debug!("Adding extensions from debug!");
 	for extension in load_from_directory(&PathBuf::from_str("./target/debug")?)? {
 		repository.add(extension).await?;
 	}

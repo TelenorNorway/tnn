@@ -1,13 +1,13 @@
 [package]
-name = "extension_loader"
+name = "util_tnn_ext_loader"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-logs = { path = "../logs" }
-extension = { path = "../extension" }
+util_tnn_logs = { path = "../logs" }
+ext_tnn = { path = "../extension" }
 anyhow = "1.0.75"
 libloading = "0.8.0"
 glob = "0.3.1"

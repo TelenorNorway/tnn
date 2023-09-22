@@ -1,5 +1,5 @@
 [package]
-name = "logs"
+name = "util_tnn_logs"
 version = "0.1.0"
 edition = "2021"
 
