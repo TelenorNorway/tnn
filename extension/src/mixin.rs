@@ -9,12 +9,12 @@ pub struct Mixin<Payload: Sized> {
 
 #[macro_export]
 macro_rules! mixin {
-	($payload:ty, $name:expr, $owner:expr) => {{
-		Mixin::<$payload> {
+	($payload:ty, $name:expr, $owner:expr) => {
+		$crate::Mixin::<$payload> {
 			name: $name,
 			owner: $owner,
 			id: $crate::internal::concatcp!($owner, "/", $name),
 			_phantom: std::marker::PhantomData,
 		}
-	}};
+	};
 }

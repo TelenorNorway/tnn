@@ -14,14 +14,14 @@ pub struct Call<Argument: Sized, Return: Sized> {
 
 #[macro_export]
 macro_rules! call {
-	($arg:ty, $ret:ty, $name:expr, $owner:expr) => {{
-		Call::<$arg, $ret> {
+	($arg:ty, $ret:ty, $name:expr, $owner:expr) => {
+		$crate::Call::<$arg, $ret> {
 			name: $name,
 			owner: $owner,
 			id: $crate::internal::concatcp!($owner, "/", $name),
 			_phantom: std::marker::PhantomData,
 		}
-	}};
+	};
 }
 
 #[derive(Error, Debug)]
