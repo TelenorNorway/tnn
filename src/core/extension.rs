@@ -1,6 +1,11 @@
 use anyhow::Result;
+use clap::Command;
 use ext_tnn::{call, Call, CallContext, CallOutput, Extension, ExtensionContext};
 use thiserror::Error;
+use tnn_core::{
+	calls::{WithCore, WITH_CORE},
+	Core,
+};
 
 pub const RUN: Call<(), ()> = call!((), (), "run", tnn_core::NAME);
 
@@ -11,23 +16,22 @@ pub static MANIFEST: Extension = Extension {
 	init: &|ctx| Box::pin(async { core_init(ctx).await }),
 };
 
-struct CoreState {}
-
-impl CoreState {
-	fn new() -> Self {
-		Self {}
-	}
-}
-
 async fn core_init(ctx: ExtensionContext) -> Result<()> {
-	ctx.state.lock().await.put(CoreState::new());
-	ctx.add_call(&tnn_core::calls::ADD_COMMAND, &add_command).await?;
+	ctx.state.lock().await.put(Core::new(
+		Command::new(env!("CARGO_PKG_NAME")).about(env!("CARGO_PKG_DESCRIPTION")),
+	));
 	ctx.add_call(&RUN, &run).await?;
+	ctx.add_call(&WITH_CORE, &with_core).await?;
 	Ok(())
 }
 
-fn add_command(_ctx: CallContext<tnn_core::calls::AddCommand<'_>>) -> CallOutput<()> {
-	Box::pin(async { Ok(()) })
+fn with_core(ctx: CallContext<WithCore<'static>>) -> CallOutput<()> {
+	Box::pin(async move {
+		let mut state = ctx.state.lock().await;
+		let core1 = state.take::<Core>()?;
+		state.put(ctx.argument.0(core1));
+		Ok(())
+	})
 }
 
 fn run(ctx: CallContext<()>) -> CallOutput<()> {
@@ -35,6 +39,10 @@ fn run(ctx: CallContext<()>) -> CallOutput<()> {
 		if ctx.caller != "" {
 			return Err(CallerNotAllowedError("core/run", ctx.caller).into());
 		}
+
+		let command = ctx.state.lock().await.take::<Core>()?.finish();
+
+		let _matches = command.get_matches();
 
 		util_tnn_logs::debug!("Running application!");
 

@@ -1,5 +1,7 @@
 // Main Extension API
 
+pub use util_tnn_state::State;
+
 pub mod internal;
 
 pub mod opaque_fn;

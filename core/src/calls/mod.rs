@@ -1,2 +1,2 @@
-mod add_command;
-pub use add_command::*;
+mod with_core;
+pub use with_core::*;

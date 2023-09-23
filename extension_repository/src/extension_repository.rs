@@ -395,7 +395,7 @@ impl<'a> ExtensionRepository {
 		Ok(())
 	}
 
-	pub async fn call<Argument: Sized, Return: Sized>(
+	pub async fn call<Argument, Return>(
 		&self,
 		call: &'static Call<Argument, Return>,
 		argument: Argument,

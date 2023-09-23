@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-pub struct Mixin<Payload: Sized> {
+pub struct Mixin<Payload> {
 	pub name: &'static str,
 	pub owner: &'static str,
 	pub id: &'static str,

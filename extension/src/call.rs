@@ -5,7 +5,7 @@ use thiserror::Error;
 
 pub type CallOutput<T> = Pin<Box<dyn Future<Output = Result<T>>>>;
 
-pub struct Call<Argument: Sized, Return: Sized> {
+pub struct Call<Argument, Return> {
 	pub name: &'static str,
 	pub owner: &'static str,
 	pub id: &'static str,

@@ -47,7 +47,7 @@ impl ExtensionContext {
 		}
 	}
 
-	pub async fn add_mixin<Payload: Sized, ReturnType: Future<Output = Result<()>>>(
+	pub async fn add_mixin<Payload, ReturnType: Future<Output = Result<()>>>(
 		&self,
 		_mixin: Mixin<Payload>,
 		_subscription_approver: &'static impl Fn(CallContext<&'static str>) -> ReturnType,
@@ -57,11 +57,11 @@ impl ExtensionContext {
 		todo!("James Bradlee: implement this")
 	}
 
-	pub async fn emit<Payload: Sized>(&self, _mixin: Mixin<Payload>, _payload: Payload) -> Result<()> {
+	pub async fn emit<Payload>(&self, _mixin: Mixin<Payload>, _payload: Payload) -> Result<()> {
 		todo!("James Bradlee: implement this")
 	}
 
-	pub async fn emit_some<Payload: Sized>(
+	pub async fn emit_some<Payload>(
 		_mixin: Mixin<Payload>,
 		_payload: Payload,
 		_receivers: &Vec<&'static str>,
@@ -69,7 +69,7 @@ impl ExtensionContext {
 		todo!("James Bradlee: implement this")
 	}
 
-	pub async fn call<Argument: Sized, Return: Sized>(
+	pub async fn call<Argument, Return>(
 		&self,
 		call: &'static Call<Argument, Return>,
 		argument: Argument,
@@ -86,7 +86,7 @@ impl ExtensionContext {
 		.await
 	}
 
-	pub fn add_call<Argument: Sized, Return: Sized, Handler: Fn(CallContext<Argument>) -> CallOutput<Return>>(
+	pub fn add_call<Argument, Return, Handler: Fn(CallContext<Argument>) -> CallOutput<Return>>(
 		&self,
 		call: &'static Call<Argument, Return>,
 		handler: &'static Handler,

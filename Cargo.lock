@@ -258,6 +258,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "marketplace"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "ext_tnn",
+ "tnn_core",
+ "util_tnn_logs",
+]
+
+[[package]]
 name = "memchr"
 version = "2.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -443,6 +454,7 @@ name = "tnn"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "clap",
  "ext_tnn",
  "thiserror",
  "tnn_core",
