@@ -1,8 +1,10 @@
+use std::marker::PhantomData;
+
 pub struct Mixin<Payload: Sized> {
 	pub name: &'static str,
 	pub owner: &'static str,
 	pub id: &'static str,
-	pub _fuck_rust1: Option<Payload>,
+	pub _phantom: PhantomData<Payload>,
 }
 
 #[macro_export]
@@ -12,7 +14,7 @@ macro_rules! mixin {
 			name: $name,
 			owner: $owner,
 			id: $crate::internal::concatcp!($owner, "/", $name),
-			_fuck_rust1: None,
+			_phantom: std::marker::PhantomData,
 		}
 	}};
 }

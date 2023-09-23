@@ -1,4 +1,4 @@
-use std::{future::Future, pin::Pin};
+use std::{future::Future, marker::PhantomData, pin::Pin};
 
 use anyhow::Result;
 use thiserror::Error;
@@ -9,8 +9,7 @@ pub struct Call<Argument: Sized, Return: Sized> {
 	pub name: &'static str,
 	pub owner: &'static str,
 	pub id: &'static str,
-	pub _fuck_rust1: Option<Argument>,
-	pub _fuck_rust2: Option<Return>,
+	pub _phantom: PhantomData<(Argument, Return)>,
 }
 
 #[macro_export]
@@ -20,8 +19,7 @@ macro_rules! call {
 			name: $name,
 			owner: $owner,
 			id: $crate::internal::concatcp!($owner, "/", $name),
-			_fuck_rust1: None,
-			_fuck_rust2: None,
+			_phantom: std::marker::PhantomData,
 		}
 	}};
 }
