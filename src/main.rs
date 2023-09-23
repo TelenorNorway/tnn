@@ -10,7 +10,7 @@ mod core;
 async fn main() -> Result<()> {
 	// Create an extension repository. This lets extensions
 	// interact with one another.
-	let repository = ExtensionRepository::new();
+	let repository = ExtensionRepository::new().await;
 
 	util_tnn_logs::debug!("Adding core extension!");
 	// Injects the core extension.

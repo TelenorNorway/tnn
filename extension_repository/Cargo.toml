@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 util_tnn_logs = { path = "../logs" }
+util_tnn_state = { path = "../state" }
 ext_tnn = { path = "../extension" }
 tokio = { version = "1.32.0", features = ["full"] }
 anyhow = "1.0.75"

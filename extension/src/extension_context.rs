@@ -1,25 +1,32 @@
 use anyhow::Result;
-use std::{any::Any, collections::HashMap, future::Future, pin::Pin, sync::Arc};
+use std::{future::Future, sync::Arc};
 use thiserror::Error;
 use tokio::sync::Mutex;
 use util_tnn_state::State;
 
-use crate::{call::Call, call_context::CallContext, extension_communication::ExtensionCommunication, Mixin};
+use crate::{
+	call::Call,
+	call_context::CallContext,
+	repository::{AddCallArgs, Repository, ADD_CALL},
+	CallOutput, Mixin,
+};
 
 #[repr(C)]
 pub struct ExtensionContext {
 	extension_name: &'static str,
 	/// A flag for wheter this context is locked
 	locked: Arc<Mutex<bool>>,
+	repository: Repository,
 	pub state: Arc<Mutex<State>>,
 }
 
 impl ExtensionContext {
-	pub fn new(extension_name: &'static str) -> ExtensionContext {
+	pub fn new(state: Arc<Mutex<State>>, extension_name: &'static str, repository: Repository) -> Self {
 		Self {
 			extension_name,
 			locked: Arc::new(Mutex::new(false)),
-			state: Arc::new(Mutex::new(State::default())),
+			repository,
+			state,
 		}
 	}
 
@@ -40,20 +47,10 @@ impl ExtensionContext {
 		}
 	}
 
-	pub async fn add_call<Argument: Sized, Return: Sized, ReturnType: Future<Output = Result<Return>>>(
-		&self,
-		call: &'static Call<Argument, Return>,
-		handler: &'static impl Fn(CallContext<Argument>) -> ReturnType,
-	) -> Result<()> {
-		self.assert_not_locked().await?;
-
-		todo!("James Bradlee: implement this")
-	}
-
 	pub async fn add_mixin<Payload: Sized, ReturnType: Future<Output = Result<()>>>(
 		&self,
-		mixin: Mixin<Payload>,
-		subscription_approver: &'static impl Fn(CallContext<&'static str>) -> ReturnType,
+		_mixin: Mixin<Payload>,
+		_subscription_approver: &'static impl Fn(CallContext<&'static str>) -> ReturnType,
 	) -> Result<()> {
 		self.assert_not_locked().await?;
 
@@ -74,10 +71,40 @@ impl ExtensionContext {
 
 	pub async fn call<Argument: Sized, Return: Sized>(
 		&self,
-		_call: Call<Argument, Return>,
-		_argument: Argument,
+		call: &'static Call<Argument, Return>,
+		argument: Argument,
 	) -> Result<Return> {
-		todo!("James Bradlee: implement this")
+		let state = self.repository.0.get_dependency_state(call.owner).await?;
+
+		unsafe {
+			self.repository
+				.0
+				.get_handler_for_call(call.owner, call.id)
+				.await?
+				.invoke(CallContext::new(state, self.extension_name, argument))
+		}
+		.await
+	}
+
+	pub fn add_call<Argument: Sized, Return: Sized, Handler: Fn(CallContext<Argument>) -> CallOutput<Return>>(
+		&self,
+		call: &'static Call<Argument, Return>,
+		handler: &'static Handler,
+	) -> impl Future<Output = Result<()>> + '_ {
+		let opaque = crate::opaque_fn::OpaqueFunction::from(handler);
+
+		async {
+			self.assert_not_locked().await?;
+
+			self.call::<AddCallArgs, ()>(
+				&ADD_CALL,
+				AddCallArgs {
+					call: call.id,
+					handler: opaque,
+				},
+			)
+			.await
+		}
 	}
 }
 
@@ -100,3 +127,7 @@ pub struct NotMixinOwnerError(&'static str, &'static str, &'static str);
 #[derive(Error, Debug)]
 #[error("Context is locked and cannot be modified!")]
 pub struct LockedError;
+
+#[derive(Error, Debug)]
+#[error("Extension '{0}' tried to call '{1}', but call handler could not be downcasted.")]
+pub struct CouldNotGetCallHandler(&'static str, &'static str);

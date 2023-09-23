@@ -535,6 +535,7 @@ dependencies = [
  "thiserror",
  "tokio",
  "util_tnn_logs",
+ "util_tnn_state",
 ]
 
 [[package]]

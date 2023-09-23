@@ -5,10 +5,17 @@ use std::{
 
 use anyhow::Result;
 use async_recursion::async_recursion;
-use ext_tnn::{Dependency, Extension, ExtensionContext};
+use ext_tnn::{
+	opaque_fn::OpaqueFunction,
+	repository::{self, Repository},
+	Dependency, Extension, ExtensionContext,
+};
 use semver::{Version, VersionReq};
 use thiserror::Error;
 use tokio::sync::Mutex;
+use util_tnn_state::State;
+
+use crate::{extension_impl, extension_protocol::ExtensionProtocol};
 
 pub struct ExtensionRepository {
 	locked: Arc<Mutex<bool>>,
@@ -41,9 +48,14 @@ pub struct ExtensionRepository {
 
 	/// Vec<(ExtensionName, ExtensionVersion, DependencyName, DependencyVersion, DependencyVersionMatcher)>
 	version_mismatches: Arc<Mutex<Vec<(&'static str, &'static str, &'static str, &'static str, &'static str)>>>,
+
+	extension_states: Arc<Mutex<HashMap<&'static str, Arc<Mutex<State>>>>>,
+
+	/// HashMap<CallId, CallHandler>
+	extension_calls: Arc<Mutex<HashMap<&'static str, Arc<OpaqueFunction>>>>,
 }
 
-impl ExtensionRepository {
+impl<'a> ExtensionRepository {
 	fn construct() -> ExtensionRepository {
 		ExtensionRepository {
 			locked: Arc::new(Mutex::new(false)),
@@ -54,11 +66,25 @@ impl ExtensionRepository {
 			extension_dependencies_expected: Arc::new(Mutex::new(HashMap::new())),
 			extensions_dependents_expected: Arc::new(Mutex::new(HashMap::new())),
 			version_mismatches: Arc::new(Mutex::new(Vec::new())),
+			extension_states: Arc::new(Mutex::new(HashMap::new())),
+			extension_calls: Arc::new(Mutex::new(HashMap::new())),
 		}
 	}
 
-	pub fn new() -> ExtensionRepository {
+	async fn init(&self) {
+		self.extension_states
+			.lock()
+			.await
+			.insert("", Arc::new(Mutex::new(State::default())));
+		self.extension_calls.lock().await.insert(
+			repository::ADD_CALL.id,
+			Arc::new(OpaqueFunction::from(&extension_impl::add_call)),
+		);
+	}
+
+	pub async fn new() -> ExtensionRepository {
 		let repository = Self::construct();
+		repository.init().await;
 		repository
 	}
 
@@ -325,9 +351,26 @@ impl ExtensionRepository {
 		}
 	}
 
-	async fn activate_extension(&self, extension: &'static Extension) -> Result<()> {
-		let extension_context = Arc::new(ExtensionContext::new(extension.name));
-		(extension.init)(Arc::clone(&extension_context)).await?;
+	async fn activate_extension(&'a self, extension: &'static Extension) -> Result<()> {
+		let state = Arc::new(Mutex::new(State::default()));
+
+		self.extension_states
+			.lock()
+			.await
+			.insert(extension.name, Arc::clone(&state));
+
+		(extension.init)(ExtensionContext::new(
+			Arc::clone(&state),
+			extension.name,
+			Repository(Box::pin(ExtensionProtocol::new(
+				extension.name,
+				Arc::clone(&self.extension_states),
+				Arc::clone(&self.extension_dependencies_resolved),
+				Arc::clone(&self.extension_calls),
+			))),
+		))
+		.await?;
+
 		self.activated_extensions.lock().await.push(extension.name);
 		Ok(())
 	}
@@ -389,7 +432,7 @@ pub enum ExtensionInstallationError {
 	#[error("Extension '{0}@{1}' contains a duplicate dependency of '{2}'")]
 	DuplicateDependency(&'static str, &'static str, &'static str),
 
-	/// A given dependency name cannot be found in the repository.
+	/// A given extension name cannot be found in the repository.
 	/// - The extension name
 	///
 	/// This should never happen! Panic.

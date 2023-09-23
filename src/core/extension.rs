@@ -1,7 +1,5 @@
-use std::sync::Arc;
-
 use anyhow::Result;
-use ext_tnn::{call, Call, CallContext, Extension, ExtensionContext};
+use ext_tnn::{call, Call, CallContext, CallOutput, Extension, ExtensionContext};
 use thiserror::Error;
 
 pub const RUN: Call<(), ()> = call!((), (), "run", tnn_core::NAME);
@@ -21,23 +19,25 @@ impl CoreState {
 	}
 }
 
-async fn core_init(ctx: Arc<ExtensionContext>) -> Result<()> {
+async fn core_init(ctx: ExtensionContext) -> Result<()> {
 	ctx.state.lock().await.put(CoreState::new());
 	ctx.add_call(&tnn_core::calls::ADD_COMMAND, &add_command).await?;
 	ctx.add_call(&RUN, &run).await?;
 	Ok(())
 }
 
-async fn add_command(_ctx: CallContext<tnn_core::calls::AddCommand<'_>>) -> Result<()> {
-	Ok(())
+fn add_command(_ctx: CallContext<tnn_core::calls::AddCommand<'_>>) -> CallOutput<()> {
+	Box::pin(async { Ok(()) })
 }
 
-async fn run(ctx: CallContext<()>) -> Result<()> {
-	if ctx.caller != tnn_core::NAME {
-		return Err(CallerNotAllowedError("core/run", ctx.caller).into());
-	}
+fn run(ctx: CallContext<()>) -> CallOutput<()> {
+	Box::pin(async move {
+		if ctx.caller != tnn_core::NAME {
+			return Err(CallerNotAllowedError("core/run", ctx.caller).into());
+		}
 
-	Ok(())
+		Ok(())
+	})
 }
 
 #[derive(Error, Debug)]

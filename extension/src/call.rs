@@ -1,3 +1,10 @@
+use std::{future::Future, pin::Pin};
+
+use anyhow::Result;
+use thiserror::Error;
+
+pub type CallOutput<T> = Pin<Box<dyn Future<Output = Result<T>>>>;
+
 pub struct Call<Argument: Sized, Return: Sized> {
 	pub name: &'static str,
 	pub owner: &'static str,
@@ -18,3 +25,7 @@ macro_rules! call {
 		}
 	}};
 }
+
+#[derive(Error, Debug)]
+#[error("Extension '{0}' tried to call '{1}', not found")]
+pub struct CallNotFoundError(pub &'static str, pub &'static str);

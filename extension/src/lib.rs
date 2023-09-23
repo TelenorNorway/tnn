@@ -2,6 +2,8 @@
 
 pub mod internal;
 
+pub mod opaque_fn;
+
 mod call;
 pub use call::*;
 
