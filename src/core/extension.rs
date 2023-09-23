@@ -32,9 +32,11 @@ fn add_command(_ctx: CallContext<tnn_core::calls::AddCommand<'_>>) -> CallOutput
 
 fn run(ctx: CallContext<()>) -> CallOutput<()> {
 	Box::pin(async move {
-		if ctx.caller != tnn_core::NAME {
+		if ctx.caller != "" {
 			return Err(CallerNotAllowedError("core/run", ctx.caller).into());
 		}
+
+		util_tnn_logs::debug!("Running application!");
 
 		Ok(())
 	})

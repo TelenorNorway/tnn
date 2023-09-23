@@ -27,5 +27,7 @@ async fn main() -> Result<()> {
 
 	repository.print_problems().await;
 
+	repository.call(&core::RUN, ()).await?;
+
 	Ok(())
 }
