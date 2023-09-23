@@ -8,7 +8,7 @@ use async_recursion::async_recursion;
 use ext_tnn::{
 	opaque_fn::OpaqueFunction,
 	repository::{self, Repository},
-	Dependency, Extension, ExtensionContext,
+	Call, CallNotFoundError, Dependency, Extension, ExtensionContext,
 };
 use semver::{Version, VersionReq};
 use thiserror::Error;
@@ -393,6 +393,34 @@ impl<'a> ExtensionRepository {
 		// todo(James Bradlee): Fire the locked event.
 
 		Ok(())
+	}
+
+	pub async fn call<Argument: Sized, Return: Sized>(
+		&self,
+		call: &'static Call<Argument, Return>,
+		argument: Argument,
+	) -> Result<Return> {
+		let state = Arc::clone(
+			self.extension_states
+				.lock()
+				.await
+				.get(call.owner)
+				.expect("should never happen"),
+		);
+		let handler = if let Some(fun) = self.extension_calls.lock().await.get(call.id) {
+			Arc::clone(fun)
+		} else {
+			return Err(CallNotFoundError("host", call.id).into());
+		};
+
+		unsafe {
+			handler.invoke(ext_tnn::CallContext {
+				state,
+				caller: "",
+				argument,
+			})
+		}
+		.await
 	}
 }
 
