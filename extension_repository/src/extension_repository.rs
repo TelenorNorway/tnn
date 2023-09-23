@@ -15,7 +15,7 @@ use thiserror::Error;
 use tokio::sync::Mutex;
 use util_tnn_state::State;
 
-use crate::{extension_impl, extension_protocol::ExtensionProtocol};
+use crate::{extension_impl, extension_protocol::ExtensionProtocol, repository_context::RepositoryContext};
 
 pub struct ExtensionRepository {
 	locked: Arc<Mutex<bool>>,
@@ -71,11 +71,17 @@ impl<'a> ExtensionRepository {
 		}
 	}
 
+	fn init_state(&self) -> State {
+		let mut state = State::default();
+		state.put(RepositoryContext::new(Arc::clone(&self.extension_calls)));
+		state
+	}
+
 	async fn init(&self) {
 		self.extension_states
 			.lock()
 			.await
-			.insert("", Arc::new(Mutex::new(State::default())));
+			.insert("", Arc::new(Mutex::new(self.init_state())));
 		self.extension_calls.lock().await.insert(
 			repository::ADD_CALL.id,
 			Arc::new(OpaqueFunction::from(&extension_impl::add_call)),
