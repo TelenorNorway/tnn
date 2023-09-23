@@ -16,9 +16,12 @@ async fn main() -> Result<()> {
 	// Injects the core extension.
 	repository.add(&core::MANIFEST).await?;
 
-	util_tnn_logs::debug!("Adding extensions from debug!");
-	for extension in load_from_directory(&PathBuf::from_str("./target/debug")?)? {
-		repository.add(extension).await?;
+	#[cfg(debug_assertions)]
+	{
+		util_tnn_logs::debug!("Adding extensions from debug!");
+		for extension in load_from_directory(&PathBuf::from_str("./target/debug")?)? {
+			repository.add(extension).await?;
+		}
 	}
 
 	// Lock repository, no new extensions can be added throughout the lifetime
