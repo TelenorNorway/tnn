@@ -91,7 +91,7 @@ impl ExtensionContext {
 		call: &'static Call<Argument, Return>,
 		handler: &'static Handler,
 	) -> impl Future<Output = Result<()>> + '_ {
-		let opaque = crate::opaque_fn::OpaqueFunction::from(handler);
+		let opaque = crate::opaque_fn::OpaqueFunctionCall::from(handler);
 
 		async {
 			self.assert_not_locked().await?;

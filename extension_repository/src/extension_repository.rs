@@ -6,7 +6,7 @@ use std::{
 use anyhow::Result;
 use async_recursion::async_recursion;
 use ext_tnn::{
-	opaque_fn::OpaqueFunction,
+	opaque_fn::OpaqueFunctionCall,
 	repository::{self, Repository},
 	Call, CallNotFoundError, Dependency, Extension, ExtensionContext,
 };
@@ -52,7 +52,7 @@ pub struct ExtensionRepository {
 	extension_states: Arc<Mutex<HashMap<&'static str, Arc<Mutex<State>>>>>,
 
 	/// HashMap<CallId, CallHandler>
-	extension_calls: Arc<Mutex<HashMap<&'static str, Arc<OpaqueFunction>>>>,
+	extension_calls: Arc<Mutex<HashMap<&'static str, Arc<OpaqueFunctionCall>>>>,
 }
 
 impl<'a> ExtensionRepository {
@@ -84,7 +84,7 @@ impl<'a> ExtensionRepository {
 			.insert("", Arc::new(Mutex::new(self.init_state())));
 		self.extension_calls.lock().await.insert(
 			repository::ADD_CALL.id,
-			Arc::new(OpaqueFunction::from(&extension_impl::add_call)),
+			Arc::new(OpaqueFunctionCall::from(&extension_impl::add_call)),
 		);
 	}
 

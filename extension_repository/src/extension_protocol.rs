@@ -1,6 +1,6 @@
 use anyhow::Result;
 use ext_tnn::{
-	opaque_fn::OpaqueFunction,
+	opaque_fn::OpaqueFunctionCall,
 	repository::{ExtensionAcessDeniedError, Protocol},
 	CallNotFoundError,
 };
@@ -18,7 +18,7 @@ pub struct ExtensionProtocol {
 	pub extension_name: &'static str,
 	repo_extension_states: Arc<Mutex<HashMap<&'static str, Arc<Mutex<State>>>>>,
 	extension_dependencies_resolved: Arc<Mutex<HashMap<&'static str, HashSet<&'static str>>>>,
-	extension_calls: Arc<Mutex<HashMap<&'static str, Arc<OpaqueFunction>>>>,
+	extension_calls: Arc<Mutex<HashMap<&'static str, Arc<OpaqueFunctionCall>>>>,
 }
 
 impl ExtensionProtocol {
@@ -26,7 +26,7 @@ impl ExtensionProtocol {
 		extension_name: &'static str,
 		repo_extension_states: Arc<Mutex<HashMap<&'static str, Arc<Mutex<State>>>>>,
 		extension_dependencies_resolved: Arc<Mutex<HashMap<&'static str, HashSet<&'static str>>>>,
-		extension_calls: Arc<Mutex<HashMap<&'static str, Arc<OpaqueFunction>>>>,
+		extension_calls: Arc<Mutex<HashMap<&'static str, Arc<OpaqueFunctionCall>>>>,
 	) -> Self {
 		Self {
 			extension_name,
@@ -72,7 +72,7 @@ impl Protocol for ExtensionProtocol {
 		&self,
 		call_owner: &'static str,
 		call_id: &'static str,
-	) -> Pin<Box<dyn Future<Output = Result<Arc<OpaqueFunction>>> + '_>> {
+	) -> Pin<Box<dyn Future<Output = Result<Arc<OpaqueFunctionCall>>> + '_>> {
 		Box::pin(async move {
 			self.assert_access(call_owner).await?;
 			if let Some(handler) = self.extension_calls.lock().await.get(call_id) {

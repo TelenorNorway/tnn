@@ -1,8 +1,8 @@
 use crate::{CallContext, CallOutput};
 
-pub struct OpaqueFunction([usize; 2]);
+pub struct OpaqueFunctionCall([usize; 2]);
 
-impl OpaqueFunction {
+impl OpaqueFunctionCall {
 	pub fn from<Argument, Return>(handler: &'static dyn Fn(CallContext<Argument>) -> CallOutput<Return>) -> Self {
 		assert_eq!(
 			std::mem::size_of::<&dyn Fn(CallContext<Argument>) -> CallOutput<Return>>(),

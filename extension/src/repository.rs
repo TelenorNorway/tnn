@@ -3,14 +3,14 @@ use thiserror::Error;
 use tokio::sync::Mutex;
 use util_tnn_state::State;
 
-use crate::{call, mixin, opaque_fn::OpaqueFunction, Call, Extension, Mixin};
+use crate::{call, mixin, opaque_fn::OpaqueFunctionCall, Call, Extension, Mixin};
 use std::{any::Any, future::Future, pin::Pin, sync::Arc};
 
 pub const ADD_EXTENSION: Call<&'static Extension, ()> = call!(&'static Extension, (), "ADD_EXTENSION", "");
 
 pub struct AddCallArgs {
 	pub call: &'static str,
-	pub handler: OpaqueFunction,
+	pub handler: OpaqueFunctionCall,
 }
 
 pub struct AddMixinArgs {
@@ -38,7 +38,7 @@ pub trait Protocol {
 		&self,
 		call_owner: &'static str,
 		call_id: &'static str,
-	) -> Pin<Box<dyn Future<Output = Result<Arc<OpaqueFunction>>> + '_>>;
+	) -> Pin<Box<dyn Future<Output = Result<Arc<OpaqueFunctionCall>>> + '_>>;
 }
 
 pub struct Repository(pub Pin<Box<dyn Protocol>>);
