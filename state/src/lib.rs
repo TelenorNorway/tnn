@@ -1,6 +1,6 @@
 // Copyright 2023 Telenor. All rights reserved. MIT license.
 
-// Forbed from crates.io:
+// Forked from crates.io:
 // https://docs.rs/gotham_state/1.0.1/src/gotham_state/lib.rs.html
 // Copyright 2022 James Bradlee. All rights reserved. MIT license.
 
@@ -73,10 +73,7 @@ impl State {
 	/// Tries to move a value out of the `State` storage and return ownership.
 	pub fn try_take<T: 'static>(&mut self) -> Option<T> {
 		let type_id = TypeId::of::<T>();
-		self.data
-			.remove(&type_id)
-			.and_then(|b| b.downcast().ok())
-			.map(|b| *b)
+		self.data.remove(&type_id).and_then(|b| b.downcast().ok()).map(|b| *b)
 	}
 
 	/// Moves a value out of the `State` storage and returns ownership.
