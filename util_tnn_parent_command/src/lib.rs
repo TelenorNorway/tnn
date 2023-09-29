@@ -20,7 +20,7 @@ impl ParentCommand {
 
 	pub fn add_command<Command: CommandFactory + FromArgMatches + 'static>(
 		mut self,
-		handler: &'static impl Fn(&Command) -> CommandHandlerReturnType,
+		handler: Box<dyn Fn(Command) -> CommandHandlerReturnType>,
 	) -> Result<Self> {
 		let subcommand = Command::command();
 		let subcommand_name: String = subcommand.get_name().to_string();
@@ -35,8 +35,8 @@ impl ParentCommand {
 
 		self.wrapped_command_handlers.insert(
 			subcommand_name,
-			Box::new(|matches| {
-				handler(&Command::from_arg_matches(matches).expect("Could not derive argument matches"))
+			Box::new(move |matches| {
+				handler(Command::from_arg_matches(matches).expect("Could not derive argument matches"))
 			}),
 		);
 
