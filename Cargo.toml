@@ -9,19 +9,19 @@ description = "A quality of life developer tool to interact with Telenor service
 
 [workspace]
 members = [
-	"state",
-	"extension",
-	"extension_repository",
-	"core",
+	"ext_tnn",
+	"tnn_core",
+	"util_tnn_*",
 	"builtin_extensions/marketplace/ext",
 ]
 
 [dependencies]
-ext_tnn = { path = "extension" }
-tnn_core = { path = "core" }
-util_tnn_repo = { path = "extension_repository" }
-util_tnn_ext_loader = { path = "extension_loader" }
-util_tnn_logs = { path = "logs" }
+ext_tnn = { path = "ext_tnn" }
+tnn_core = { path = "tnn_core" }
+util_tnn_repo = { path = "util_tnn_repo" }
+util_tnn_ext_loader = { path = "util_tnn_ext_loader" }
+util_tnn_logs = { path = "util_tnn_logs" }
+util_tnn_parent_command = { path = "util_tnn_parent_command" }
 
 tokio = { version = "1.32.0", features = ["full"] }
 anyhow = "1.0.75"

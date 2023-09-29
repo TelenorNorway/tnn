@@ -1,7 +1,7 @@
 use anyhow::Result;
-use clap::Subcommand;
+use clap::Parser;
 use ext_tnn::{Dependency, Extension, ExtensionContext};
-use tnn_core::calls::WithCore;
+use tnn_core::{add_command, CommandHandlerReturnType};
 
 #[no_mangle]
 pub static MANIFEST: Extension = Extension {
@@ -11,12 +11,20 @@ pub static MANIFEST: Extension = Extension {
 	init: &|ctx| Box::pin(async { init(ctx).await }),
 };
 
-async fn init(_ctx: ExtensionContext) -> Result<()> {
-	_ctx.call(&tnn_core::calls::WITH_CORE, WithCore(&|core| core.add_command()))
-		.await?;
+async fn init(ctx: ExtensionContext) -> Result<()> {
+	add_command::<App>(&ctx, &handle_command).await?;
 	util_tnn_logs::debug!("Hello from marketplace");
 	Ok(())
 }
 
-#[derive(Subcommand, Debug)]
-enum App {}
+fn handle_command(_args: &App) -> CommandHandlerReturnType {
+	Box::pin(async {
+		util_tnn_logs::debug!("Yo from marketplace");
+
+		Ok(())
+	})
+}
+
+#[derive(Parser)]
+#[command(name = "test", author, version)]
+struct App;

@@ -6,9 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-util_tnn_logs = { path = "../logs" }
-util_tnn_state = { path = "../state" }
-ext_tnn = { path = "../extension" }
+util_tnn_logs = { path = "../util_tnn_logs" }
+util_tnn_state = { path = "../util_tnn_state" }
+ext_tnn = { path = "../ext_tnn" }
 tokio = { version = "1.32.0", features = ["full"] }
 anyhow = "1.0.75"
 thiserror = "1.0.48"

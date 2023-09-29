@@ -1,13 +1,8 @@
 [package]
-name = "ext_tnn"
+name = "util_tnn_opaque_function"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-util_tnn_state = { path = "../state" }
-thiserror = "1.0.48"
-tokio = "1.32.0"
-const_format = "0.2.31"
-anyhow = "1.0.75"

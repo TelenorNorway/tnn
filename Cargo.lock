@@ -461,6 +461,7 @@ dependencies = [
  "tokio",
  "util_tnn_ext_loader",
  "util_tnn_logs",
+ "util_tnn_parent_command",
  "util_tnn_repo",
 ]
 
@@ -471,6 +472,7 @@ dependencies = [
  "anyhow",
  "clap",
  "ext_tnn",
+ "util_tnn_parent_command",
 ]
 
 [[package]]
@@ -535,6 +537,19 @@ dependencies = [
 [[package]]
 name = "util_tnn_logs"
 version = "0.1.0"
+
+[[package]]
+name = "util_tnn_opaque_function"
+version = "0.1.0"
+
+[[package]]
+name = "util_tnn_parent_command"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "thiserror",
+]
 
 [[package]]
 name = "util_tnn_repo"

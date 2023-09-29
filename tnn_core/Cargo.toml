@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-ext_tnn = { path = "../extension" }
+ext_tnn = { path = "../ext_tnn" }
+util_tnn_parent_command = { path = "../util_tnn_parent_command" }
 clap = { version = "4.4.4", features = ["derive"] }
 anyhow = "1.0.75"
