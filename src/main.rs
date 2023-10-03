@@ -1,10 +1,7 @@
 use std::{path::PathBuf, str::FromStr};
 
 use anyhow::Result;
-use util_tnn_ext_loader::load_from_directory;
-use util_tnn_repo::ExtensionRepository;
-
-mod core;
+use tnn::repository::ExtensionRepository;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -12,25 +9,25 @@ async fn main() -> Result<()> {
 	// interact with one another.
 	let repository = ExtensionRepository::new().await;
 
-	util_tnn_logs::debug!("Adding core extension!");
+	tnn::debug!("Adding core extension!");
 	// Injects the core extension.
-	repository.add(&core::MANIFEST).await?;
+	repository.add(&tnn::core::extension::MANIFEST).await?;
 
 	#[cfg(debug_assertions)]
 	{
-		util_tnn_logs::debug!("Adding extensions from debug!");
-		for extension in load_from_directory(&PathBuf::from_str("./target/debug")?)? {
+		tnn::debug!("Adding extensions from debug!");
+		for extension in tnn::util::extension_loader::load_from_directory(&PathBuf::from_str("./target/debug")?)? {
 			repository.add(extension).await?;
 		}
 	}
 
 	// Lock repository, no new extensions can be added throughout the lifetime
 	// of the application.
-	// repository.lock().await?;
+	repository.lock().await?;
 
 	repository.print_problems().await;
 
-	repository.call(&core::RUN, ()).await?;
+	repository.call(&tnn::core::extension::RUN, ()).await?;
 
 	Ok(())
 }

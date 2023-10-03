@@ -1,24 +1,22 @@
 [package]
 name = "tnn"
+description = "A quality of life developer tool to interact with Telenor services"
 version = "0.1.0"
 edition = "2021"
 authors = ["Telenor"]
-description = "A quality of life developer tool to interact with Telenor services"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [workspace]
-members = ["ext_tnn", "tnn_core", "util_tnn_*", "builtin_extensions/test/ext"]
+members = ["builtin_extensions/test/ext"]
 
 [dependencies]
-ext_tnn = { path = "ext_tnn" }
-tnn_core = { path = "tnn_core" }
-util_tnn_repo = { path = "util_tnn_repo" }
-util_tnn_ext_loader = { path = "util_tnn_ext_loader" }
-util_tnn_logs = { path = "util_tnn_logs" }
-util_tnn_parent_command = { path = "util_tnn_parent_command" }
-
 tokio = { version = "1.32.0", features = ["full"] }
 anyhow = "1.0.75"
 thiserror = "1.0.48"
 clap = { version = "4.4.4", features = ["derive"] }
+glob = "0.3.1"
+libloading = "0.8.1"
+const_format = "0.2.31"
+async-recursion = "1.0.5"
+semver = "1.0.19"

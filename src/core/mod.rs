@@ -1,4 +1,2 @@
-mod app;
-
-mod extension;
-pub use extension::*;
+pub mod api;
+pub mod extension;

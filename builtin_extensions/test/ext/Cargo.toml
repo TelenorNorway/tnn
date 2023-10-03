@@ -2,13 +2,13 @@
 name = "test"
 version = "0.1.0"
 edition = "2021"
+authors = ["Telenor"]
+publish = false
 
 [lib]
 crate-type = ["cdylib"]
 
 [dependencies]
-tnn_core = { path = "../../../tnn_core" }
-ext_tnn = { path = "../../../ext_tnn" }
-util_tnn_logs = { path = "../../../util_tnn_logs" }
+tnn = { path = "../../.." }
 anyhow = "1.0.75"
 clap = { version = "4.4.4", features = ["derive"] }

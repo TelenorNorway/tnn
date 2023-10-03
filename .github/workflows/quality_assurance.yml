@@ -1,0 +1,5 @@
+name: Quality Assurance
+on: [pull_request, workflow_call]
+jobs:
+  fmt:
+    name:
