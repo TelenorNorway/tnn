@@ -20,6 +20,10 @@ async fn main() -> Result<()> {
 			repository.add(extension).await?;
 		}
 	}
+	#[cfg(not(debug_assertions))]
+	{
+		tnn::debug!("Adding extensions from TNN_HOME!");
+	}
 
 	// Lock repository, no new extensions can be added throughout the lifetime
 	// of the application.

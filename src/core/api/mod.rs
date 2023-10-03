@@ -1,4 +1,4 @@
-pub const NAME: &'static str = "core";
+pub const NAME: &'static str = "tnn";
 pub const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
 pub mod calls;
