@@ -23,6 +23,18 @@ async fn main() -> Result<()> {
 	#[cfg(not(debug_assertions))]
 	{
 		tnn::debug!("Adding extensions from TNN_HOME!");
+		let tnn_home = PathBuf::from_str(
+			&shellexpand::full(
+				std::env::var_os("TNN_HOME")
+					.map_or("~/.tnn".to_string(), move |var| var.to_str().unwrap().to_string())
+					.as_str(),
+			)
+			.expect("Could not expand TNN_HOME!"),
+		)
+		.expect("Invalid TNN_HOME, could not parse into a path!");
+		for extension in tnn::util::extension_loader::load_from_directory(&tnn_home.join("extensions"))? {
+			repository.add(extension).await?;
+		}
 	}
 
 	// Lock repository, no new extensions can be added throughout the lifetime

@@ -24,7 +24,7 @@ fn level_prefix(level: Level) -> &'static str {
 
 pub fn log(level: Level, message: String) {
 	#[cfg(not(debug_assertions))]
-	if level == Level::Debug {
+	if std::env::var_os("TNN_DEBUG").is_none() {
 		return;
 	}
 	println!("{} {}", level_prefix(level), message);
