@@ -9,7 +9,6 @@ license = "MIT"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [workspace]
-members = ["builtin_extensions/test/ext"]
 
 [dependencies]
 tokio = { version = "1.32.0", features = ["full"] }
