@@ -1,0 +1,16 @@
+[package]
+name = "itnn_reexports"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+# tnn exports
+itnn_extension.workspace = true
+itnn_extension_macros.workspace = true
+
+# External Re-exports
+anyhow.workspace = true
+thiserror.workspace = true

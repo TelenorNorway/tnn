@@ -1,0 +1,13 @@
+[package]
+name = "showcase1"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+tnn.workspace = true

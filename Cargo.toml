@@ -1,23 +1,34 @@
-[package]
-name = "tnn"
-description = "A quality of life developer tool to interact with Telenor services"
-version = "0.1.3"
-edition = "2021"
-authors = ["Telenor"]
-license = "MIT"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [workspace]
+members = ["itnn_*", "tnn", "showcase/*"]
+resolver = "2"
 
-[dependencies]
-tokio = { version = "1.32.0", features = ["full"] }
-anyhow = "1.0.75"
-thiserror = "1.0.48"
-clap = { version = "4.4.4", features = ["derive", "env"] }
-glob = "0.3.1"
-libloading = "0.8.1"
-const_format = "0.2.31"
-async-recursion = "1.0.5"
-semver = "1.0.19"
-shellexpand = "3.1.0"
+[workspace.package]
+version = "0.2.0"
+authors = ["Telenor"]
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/TelenorNorway/tnn"
+
+[workspace.dependencies]
+# Local Dependencies
+itnn_core = { version = "0.2.0", path = "./itnn_core" }
+itnn_extension = { version = "0.2.0", path = "./itnn_extension" }
+itnn_extension_macros = { version = "0.2.0", path = "./itnn_extension_macros" }
+itnn_extension_util_macros = { version = "0.2.0", path = "./itnn_extension_util_macros" }
+itnn_reexports = { version = "0.2.0", path = "./itnn_reexports" }
+itnn_util = { version = "0.2.0", path = "./itnn_util" }
+tnn = { version = "0.2.0", path = "./tnn" }
+
+showcase1 = { version = "0.2.0", path = "./showcase/showcase1" }
+
+# External Dependencies
+tokio = { version = "1.32", features = ["full"] }
+anyhow = "1"
+thiserror = "1"
+quote = "1"
+proc-macro2 = "1"
+paste = "1"
+syn = { version = "2", features = ["full", "visit", "visit-mut"] }
+serde = { version = "1.0", features = ["derive"] }
+const_format = "0.2"
+semver = "1.0"
